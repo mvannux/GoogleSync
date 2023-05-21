@@ -1,4 +1,5 @@
 # GoogleSync
 
-node sync.js -l <LocalFullPathFile> -r <remoteFileName>
-  
+```sh
+> node sync.js -l <LocalFullPathFile> -r <remoteFileName>
+```  
