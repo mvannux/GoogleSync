@@ -1,4 +1,5 @@
 node_modules/
 credentials.json
 token.json
-sync.ps1
+*.ps1
+*.bat
