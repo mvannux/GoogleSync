@@ -149,9 +149,11 @@ async function createFile(authClient, localFilePath, localFileStats, remoteFileN
   const requestBody = {
     name: remoteFileName,
     fields: 'id',
-    modifiedTime: localFileStats.mtime,
+    //modifiedTime: localFileStats.mtime,
     //modifiedByMeTime: localFile.mtime
   };
+  if (localFileStats) requestBody.modifiedTime=localFileStats.mtime;
+  
   const media = {
     mimeType: "application/octet-stream",
     body: createReadStream(localFilePath),
@@ -218,7 +220,11 @@ async function downloadFile(authClient, localFilePath, remoteFileId, remoteModif
 async function sync(localFilePath, remoteFile) {
   const authClient = await authorize();
   const remoteFileStats = await getRemoteFileStats(authClient, remoteFile);
-  const localFileStats = await fs.stat(localFilePath);
+  let localFileStats;
+  try {
+	localFileStats = await fs.stat(localFilePath);
+  }
+  catch {}
   
   // if (!folder) {
   //   folder = await googleDriveService.createFolder(folderName);
@@ -232,8 +238,13 @@ async function sync(localFilePath, remoteFile) {
   // }
 
   if (!remoteFileStats) {
-    createFile(authClient, localFilePath, localFileStats, remoteFile);
+    await createFile(authClient, localFilePath, localFileStats, remoteFile);
     return;
+  }
+  
+  if (!localFileStats) {
+      await downloadFile(authClient, localFilePath, remoteFileStats.id, mr);
+	  return;
   }
 
   var ml = localFileStats.mtime.getTime();
