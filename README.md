@@ -14,7 +14,9 @@
 . scaricare col nome "credentials.json"
 https://console.cloud.google.com/apis/credentials?project=sincronizza-drive
 
+in caso di `GaxiosError: invalid_grant` eliminare "token.json"
 
 ```sh
 node sync.js -l <LocalFullPathFile> -r <remoteFileName>
+node utils.js upload -l <LocalFullPathFile> -r <remoteFileName>
 ```  
