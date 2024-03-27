@@ -106,22 +106,23 @@ async function getRemoteFileStats(authClient, fileName) {
 
       fields: 'files(id,name,modifiedTime)',
     });
+    const files = res.data.files;
+    if (files.length === 0) {
+      console.log('No files found.');
+      return null;
+    }
+
+    // console.log('Files:');
+    // files.map((file) => {
+    //   console.log(`${file.name} (${file.id}) ${file.modifiedTime}`);
+    // });
+    return files[0];
+
   } catch (ex) {
     //console.error(ex);
     console.error("Try to delete 'token.json'");
     throw ex;
   }
-  const files = res.data.files;
-  if (files.length === 0) {
-    console.log('No files found.');
-    return null;
-  }
-
-  // console.log('Files:');
-  // files.map((file) => {
-  //   console.log(`${file.name} (${file.id}) ${file.modifiedTime}`);
-  // });
-  return files[0];
 }
 
 /**
@@ -202,7 +203,7 @@ async function updateRemoteFile(authClient, localFilePath, localFileStats, remot
  * Download file
  */
 async function downloadFile(authClient, localFilePath, remoteFileId, remoteModifiedTime) {
-  console.log("Download file");
+  console.log("Download file in " + localFilePath);
   const drive = getDrive(authClient);
   const localfile = createWriteStream(localFilePath)
   const resp = await drive.files.get({
@@ -319,7 +320,7 @@ async function download(localFilePath, remoteFile) {
   if (ml < mr)
     await downloadFile(authClient, localFilePath, remoteFileStats.id, mr);
   else
-    console.log("Files are equals");
+    console.log("Local file is equals to remote file " + localFilePath);
 }
 
 process.on('warning', (warning) => {
